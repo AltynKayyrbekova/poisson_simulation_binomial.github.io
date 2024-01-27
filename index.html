@@ -42,7 +42,7 @@
                     </div>
         
                 <form id="poisson-form">
-                    <label for="lambda1">Интенсивность \(λ\):</label>
+                    <label for="lambda1">Интенсивность 0<\( λ \) (rate):</label>
                     <p></p>
                     <input type="number" step="0.01" id="lambda1" name="lambda" min="0" required>
                     <p></p>
@@ -105,7 +105,7 @@
                 <p></p>
                 <input type="number" step="0.01" id="p" name="p" required>
                 <p></p>
-                <label for="lambda">Параметр λ (rate): </label>
+                <label for="lambda">Интенсивность 0<\( λ \) (rate): </label>
                 <p></p>
                 <input style="border: 0px solid #878787" type="number" step="0.01" id="lambda" name="lambda" min="0" readonly>
                 <p></p>
@@ -160,7 +160,7 @@
 
                 <ul>
                     <li> \( e \) - экспонента,</li>
-                    <li> \( λ \) - параметр распределения, равный среднему числу событий в интервале времени или пространстве.</li>               
+                    <li> \( λ \) - параметр распределения Пуассона.</li>               
 
                 </ul> 
                 
@@ -169,11 +169,6 @@
                 \[ M(X) = E(X) = μ = λ \]
                     
                 \[ D(X) = Var(X) = σ^2 = λ \]
-                    
-                <p>Эти формулы основываются на особенностях распределения Пуассона, где математическое ожидание и дисперсия всегда равны \(λ\). 
-                    Это происходит из основного предположения распределения, что события происходят независимо друг от друга, и интенсивность 
-                    событий (\(λ\)) остается постоянной.
-                </p>
                 
             </div>
         </section>
@@ -265,7 +260,7 @@
             }
 
             window.myPoissonChart = new Chart(ctx, {
-                type: 'scatter', 
+                type: 'bar', 
                 data: {
                     labels: Array.from({ length: data.length }, (_, i) => i.toString()),
                     datasets: [{
@@ -302,21 +297,8 @@
                             }
                         }
                     },
-                    legend: false // Убираем легенду
-                    
+                    barPercentage: 0.1
                 }
-            });
-
-            // Добавьте второй dataset с типом 'bar'
-            window.myPoissonChart.data.datasets.push({
-                type: 'bar',
-                label: 'Вероятность',
-                data: data,
-                backgroundColor: 'rgba(255, 99, 132, 1)',
-                borderColor: 'rgba(255, 99, 132, 1)', 
-                borderWidth: 1,
-                barPercentage: 0.01, 
-                
             });
 
             window.myPoissonChart.update();
