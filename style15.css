@@ -1,0 +1,120 @@
+body {
+    font-size: 120%;
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
+    margin: 0;
+    background-image: url('../backgrounds/cream.png');
+    box-sizing: border-box;
+}
+
+.container-1,
+.container-2 {
+    width: 60%;
+    margin: 10px auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+header {
+    background-color: #000000;
+    color: #ecf0f1;
+    padding: 1vw 0;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+header h1 {
+    font-size: 2vw;
+}
+
+#example-text-1,
+#poisson-output {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#simulation-section,
+#simulation-section1 {
+    flex: 1 1 calc(50% - 10px);
+}
+
+#distribution-table-section,
+#poisson-table-section {
+    flex: 0 1 calc(60% - 20px);
+    max-width: 150px;
+    min-width: 50px;
+}
+
+.distribution-table-container,
+.poisson-table-container {
+    width: 100%;
+    margin-left: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+#combined-chart,
+#poisson-chart {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    margin-top: 20px;
+}
+
+#output,
+#example-text {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+div[role="button"] {
+    text-transform: none;
+    cursor: pointer;
+    padding: 2px;
+    background-color: #ffffff;
+    border: 1px solid rgb(255, 255, 255);
+    border-radius: 5px;
+    width: 150px; /* Фиксированная ширина кнопок */
+    margin-bottom: 20px;
+}
+
+input, select {
+    border: 1px solid #63f34c;
+    border-radius: 10px;
+    padding: 6px;
+    background-color: rgb(240, 240, 240);
+    margin: 2px;
+    width: 150px; /* Фиксированная ширина областей ввода */
+    box-sizing: border-box;
+}
+
+#combined-form input,
+#poisson-form input {
+    width: 150px; /* Фиксированная ширина инпутов в формах */
+}
+
+button {
+    border-radius: 40px;
+    border: solid 6px rgb(84, 182, 84);
+    color: rgb(255, 255, 255);
+    background-color: rgb(84, 182, 84);
+    width: 120px; /* Фиксированная ширина кнопок */
+    box-sizing: border-box;
+}
+
+#distribution-table-body td,
+#poisson-table-body td {
+    padding: 10px;
+}

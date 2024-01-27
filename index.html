@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Распределение Пуассона</title>
+    <link rel="stylesheet" href="style15.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js" 
+    integrity="sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.min.js" 
+    integrity="sha512-wUYbRPLV5zs6IqvWd88HIqZU/b8TBx+I8LEioQ/UC0t5EMCLApqhIAnUg7EsAzdbhhdgW07TqYDdH3QEXRcPOQ==" 
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Распределение Пуассона</h1>
+    </header>
+    <div class="container-1">
+        <section id="simulation-section">
+            <div role="button" onclick="toggleExampleText()" style="color: rgb(139, 139, 255);">Пример задачи</div>
+                    <div id="example-text" style="display: none;"> 
+                        <p>Предположим, что среднее количество аварий на перекрестке в течение часа составляет 2
+                        \(λ=2\). Какова вероятность того, что произойдет ровно 3 аварии в течение часа?</p>
+                        <p>Чтобы решить эту задачу с использованием тренажера, вам нужно ввести значение параметра
+                        распределения Пуассона \(λ\) (интенсивность) и количество интересующих нас событий x (количество аварий)
+                        в соответствующие поля и нажать кнопку "Старт". Тренажер отобразит график распределения 
+                        Пуассона и численные значения вероятности, математического ожидания \((M(X))\) и дисперсии \((D(X))\).</p>
+                    </div>
+        
+                <form id="poisson-form">
+                    <label for="lambda1">Интенсивность \(λ\):</label>
+                    <p></p>
+                    <input type="number" step="0.01" id="lambda1" name="lambda" min="0" required>
+                    <p></p>
+
+                    <label for="x">Количество событий \(x*\):</label>
+                    <p></p>
+                    <input type="number" id="x" name="x" required>
+                    <p></p>
+                    <p style="font-size: 1vw;">\(*x\) не является параметром распределения</p>
+
+                    <button type="button" onclick="generatePoisson()">Старт</button>
+                </form>
+
+                <canvas id="poisson-chart"></canvas>
+
+                <div id="poisson-output", style="display: none;">
+                    <h2>Численные характеристики</h2>
+                    <p id="poisson-mean"> Математическое ожидание (Mean ): \(M(X) = E(X) \) = <span class="math" id="mean"></span></p>
+                    <p id="poisson-variance"> Дисперсия (Variance): \(D(X) = Var(X) \) = <span class="math" id="variance"></span></p>
+                </div>
+        </section>
+        <section id="poisson-table-section" style=" width: 40%; display: none;">
+            <div class="poisson-table-container">
+                <label for="decimal-places">Количество знаков после запятой:</label>
+                <input class="decimal" type="number" id="decimal-places" min="0" onchange="updateDecimalPlacesPoisson()">
+                <div id="poisson-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>\(x\)</th>
+                                <th>\(P(X=x)\)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="poisson-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="container-2">
+        <h1>Распределение Пуассона в сравнении с Биномиальным</h1>
+        <section id="simulation-section1">
+            <div role="button" onclick="toggleExampleText2()" style="color: rgb(139, 139, 255);">Пример задачи</div>
+            <div id="example-text2" style="display: none;"> 
+                Давайте рассмотрим пример, когда мы с вами 12 раз бросаем 2 кости. И пусть наша случайная величина \(X\) – это количество появления двух шестерок, 
+                то есть и на одной кости выпала 6, и на другой. Тогда в данном случае \(n\)=12, \(p\)=1/36 = 0,0278. Введя в наш иллюстратор
+                значения параметров биномиального распределения \(n\) и \(p\), \(λ\) автоматически принимает значение вычисленное по формуле 
+                \(λ\)= \(n\)\(\cdot\)\(p\), иллюстратор, посчитав вероятности по формулам биномиального распределения и распределения Пуассона, 
+                выведет значения вероятностей в таблице и на графике, для визуального сравнения двух распределении. А также выведет значения численных 
+                характеристик \( M(X) \) и \( D(X) \).
+            </div>
+
+            <form id="combined-form">
+                <label for="n">Количество опытов (\( n <= 170 \) ): </label>
+                <p></p>
+                <input type="number" id="n" name="n" required min="1">
+                <p></p>
+                <label for="p">Вероятность успеха в каждом опыте (\( 0 < p < 1 \)): </label>
+                <p></p>
+                <input type="number" step="0.01" id="p" name="p" required>
+                <p></p>
+                <label for="lambda">Параметр λ (rate): </label>
+                <p></p>
+                <input style="border: 0px solid #878787" type="number" step="0.01" id="lambda" name="lambda" min="0" readonly>
+                <p></p>
+
+                <button type="button" onclick="startSimulation()">Старт</button>
+            </form>
+
+            <canvas id="combined-chart"></canvas>
+
+            <div id="output" style="display: none;">
+                <h2>Численные характеристики</h2>
+                <p></p>
+                <p style="font-style:italic; text-decoration: underline;">Посчитанные по формулам распределения Пуассона:</p>
+                <p id="output-mean-poisson"> Математическое ожидание (Mean): \(M(X) = E(X) \) = <span class="math" id="meanPoisson"></span></p>
+                <p id="output-variance-poisson"> Дисперсия (Variance): \(D(X) = Var(X) \) =<span class="math" id="variancePoisson"></span></p>
+                <p></p>
+                <p style="font-style:italic; text-decoration: underline;">Посчитанные по формулам биномиального распределения:</p>
+                <p id="output-mean"> Математическое ожидание (Mean ): \(M(X) = E(X) \) =<span class="math" id="mean2"></span></p>
+                <p id="output-variance"> Дисперсия (Variance): \(D(X) = Var(X) \) = <span class="math" id="variance2"></span></p>
+            </div>
+            
+
+            <div role="button" onclick="toggleExplanation2()" style="color: rgb(139, 139, 255)">Объяснение</div>
+            <div id="explanation2" style="display: none;">
+                Распределение Пуассона является приближением биномиального распределения. Давайте разберем этот 
+                вопрос подробнее. Пусть случайная величина (СВ) имеет биномиальное распределение с параметрами \(n\) и \(p\). То есть проводится 
+                \(n\) независимых опытов с вероятностью успеха в каждом \(p\), причем \(p\) стремится к 0, когда \(n\) стремится к 
+                бесконечности, но таким образом, что произведение \(n\) на \(p\) стремится к некоторой константе, которую мы 
+                обозначим \(λ\). В этом случае вероятность того, что случайная величина примет некоторое значение \(k\), 
+                стремится к соответствующей вероятности распределения Пуассона с параметром \(λ\). На практике это 
+                приближение применяют, когда вероятность успеха достаточно мала, а количество опытов достаточно велико.
+
+                <p>Вероятность события, что случайная величина \(X\) примет значение \(k\), в биномиальном распределении вычисляется по формуле:</p>
+
+                \[ P(X = k) = \binom{n}{k} \cdot p^k \cdot (1 - p)^{n - k},\]
+                <p>где</p>
+                <ul>
+                    <li> \( \binom{n}{k} \) - число сочетаний \(n\) по \(k\),</li>
+                    <li> \( p \) - вероятность успеха в каждом опыте,</li>
+                    <li> \( (1 - p) \) - вероятность неудачи в каждом опыте.</li>
+                </ul>
+                
+                \[ \binom{n}{k} = \frac{n!}{k! \cdot (n - k)!} ,\]
+                
+                \[ k! = 1 \cdot 2 \cdot 3 \cdot ... \cdot k. \]
+
+                <p>Вероятность события, что случайная величина \(X\) примет значение \(k\), в распределении Пуассона вычисляется следующим образом:</p>
+
+                \[P(X=k) = \frac{e^{-λ} \cdot λ^k}{k!},\]
+
+                <p>где</p>
+
+                <ul>
+                    <li> \( e \) - экспонента,</li>
+                    <li> \( λ \) - параметр распределения, равный среднему числу событий в интервале времени или пространстве.</li>               
+
+                </ul> 
+                
+                <p>Математическое ожидание \(μ\) и Дисперсия (\(σ^2\)) в распределении Пуассона равно параметру распределения \(λ\) (интенсивности событий). То есть:</p>
+                    
+                \[ M(X) = E(X) = μ = λ \]
+                    
+                \[ D(X) = Var(X) = σ^2 = λ \]
+                    
+                <p>Эти формулы основываются на особенностях распределения Пуассона, где математическое ожидание и дисперсия всегда равны \(λ\). 
+                    Это происходит из основного предположения распределения, что события происходят независимо друг от друга, и интенсивность 
+                    событий (\(λ\)) остается постоянной.
+                </p>
+                
+            </div>
+        </section>
+
+        <section id="distribution-table-section" style=" width: 40%; display: none;">
+            <div class="distribution-table-container">
+                <label for="decimal-places1">Количество знаков после запятой:</label>
+                <input class="decimal1" type="number" id="decimal-places1" min="0" onchange="updateDecimalPlaces1()">
+                <div id="distribution-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>\(x\)</th>
+                                <th>Биномиальное \(P(X=x)\)</th>
+                                <th>Пуассоновское \(P(X=x)\)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="distribution-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        function generatePoisson() {
+            const lambdaInput = document.getElementById('lambda1');
+            const xInput = document.getElementById('x');
+            const poissonTableSection = document.getElementById('poisson-table-section');
+
+            const lambda = parseFloat(lambdaInput.value);
+            const x = parseInt(xInput.value);
+
+            // Проверка на корректность ввода
+            if (
+                isNaN(lambda) || isNaN(x) ||
+                lambda < 0 || x < 0
+            ) {
+                alert('Пожалуйста, введите корректные значения.');
+                return;
+            }
+
+            const { data, mean, variance } = calculatePoissonDistribution(lambda, x);
+
+            updatePoissonChart(data);
+
+            // Обновленный вызов для отображения численных значений
+            updateOutput('poisson-output', mean, variance);
+
+            // Обновленный вызов для отображения таблицы
+            const decimalPlaces = getDecimalPlaces();
+            updatePoissonTable(data, decimalPlaces);
+
+            poissonTableSection.style.display = 'block';
+            document.getElementById('poisson-output').style.display = 'block';
+        }
+
+        function calculatePoissonDistribution(lambda, x) {
+            const data = [];
+            let mean = lambda;
+            let variance = lambda;
+
+            for (let k = 0; k <= x; k++) {
+                const probability = poissonProbability(k, lambda);
+                data.push({
+                    x: k,
+                    y: probability
+                });
+            }
+
+            // Правильный синтаксис для возврата объекта
+            return { data, mean, variance };
+        }
+
+        function getDecimalPlaces() {
+            const decimalPlacesInput = document.getElementById('decimal-places');
+            return parseInt(decimalPlacesInput.value) || 3;
+        }
+
+        function updatePoissonChart(data) {
+            const ctx = document.getElementById('poisson-chart').getContext('2d');
+            if (window.myPoissonChart) {
+                window.myPoissonChart.destroy();
+            }
+
+            window.myPoissonChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({ length: data.length }, (_, i) => i.toString()),
+                    datasets: [{
+                        label: 'Вероятность',
+                        data: data,
+                        backgroundColor: 'rgba(155, 89, 182, 0.7)',
+                        borderColor: 'rgba(155, 89, 182, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            max: data.length -1
+                        },
+                        y: {
+                            min: 0
+                        }
+                    },
+                    plugins: {
+                        zoom: {
+                            pan: {
+                                enabled: true,
+                                mode: "xy"
+                            },
+                            zoom: {
+                                wheel: {
+                                    enabled: true
+                                },
+                                pinch: {
+                                    enabled: true
+                                }
+                            }
+                        }
+                    },
+                    barPercentage: 0.1
+                }
+            });
+        }
+
+        function updateOutput(containerId, mean, variance) {
+            const outputContainer = document.getElementById(containerId);
+            const meanOutput = outputContainer.querySelector('#poisson-mean .math');
+            const varianceOutput = outputContainer.querySelector('#poisson-variance .math');
+
+            meanOutput.textContent = ` ${mean.toFixed(getDecimalPlaces(3))}`;
+            varianceOutput.textContent = `${variance.toFixed(getDecimalPlaces(3))}`;
+
+
+        }
+
+        function updatePoissonTable(data, decimalPlaces) {
+            const tableBody = document.getElementById('poisson-table-body');
+            tableBody.innerHTML = '';
+
+            for (let i = 0; i < data.length; i++) {
+                const newRow = document.createElement('tr');
+                const xCell = document.createElement('td');
+                const poissonProbCell = document.createElement('td');
+
+                xCell.textContent = data[i].x;
+                poissonProbCell.textContent = data[i].y.toExponential(decimalPlaces);
+
+                newRow.appendChild(xCell);
+                newRow.appendChild(poissonProbCell);
+
+                tableBody.appendChild(newRow);
+            }
+        }
+
+        function updateDecimalPlacesPoisson() {
+            const decimalPlaces = getDecimalPlaces();
+
+            const lambdaInput = document.getElementById('lambda');
+            const xInput = document.getElementById('x');
+
+            const lambda = parseFloat(lambdaInput.value);
+            const x = parseInt(xInput.value);
+
+            // Проверка на корректность ввода
+            if (isNaN(lambda) || isNaN(x) || lambda < 0 || x < 0) {
+                alert('Пожалуйста, введите корректные значения.');
+                return;
+            }
+
+            const { data, mean, variance } = calculatePoissonDistribution(lambda, x);
+
+            updatePoissonTable(data, decimalPlaces);
+        }
+        
+        let animationStarted = false;
+        let myCombinedChart;
+
+        function toggleExampleText() {
+            const exampleText = document.getElementById('example-text');
+            exampleText.style.display = (exampleText.style.display === 'none' || exampleText.style.display === '') ? 'block' : 'none';
+        }
+
+        function toggleExampleText2() {
+            const exampleText = document.getElementById('example-text2');
+            exampleText.style.display = (exampleText.style.display === 'none' || exampleText.style.display === '') ? 'block' : 'none';
+        }
+
+        function toggleExplanation2() {
+            const explanation = document.getElementById('explanation2');
+            explanation.style.display = (explanation.style.display === 'none' || explanation.style.display === '') ? 'block' : 'none';
+        }
+
+        function startSimulation() {
+            const nInput = document.getElementById('n');
+            const pInput = document.getElementById('p');
+            const lambdaInput = document.getElementById('lambda');
+            const outputContainer = document.getElementById('output');
+            const distributionTableSection = document.getElementById('distribution-table-section');
+
+            const n = parseInt(nInput.value);
+            const p = parseFloat(pInput.value);
+
+            if (isNaN(n) || isNaN(p) || n <= 0 || p < 0 || p > 1) {
+                alert('Пожалуйста, введите корректные значения. Please enter valid values.');
+                return;
+            }
+
+            const lambda = n * p;
+            lambdaInput.value = lambda.toFixed(2);
+
+            const binomialData = calculateBinomialDistribution(n, p);
+            const poissonData = generatePoissonData(lambda, n);
+
+            
+            if (myCombinedChart) {
+                myCombinedChart.destroy();
+            }
+
+            updateCombinedChart(binomialData, poissonData);
+
+            outputContainer.style.display = 'block';
+            distributionTableSection.style.display = 'block';
+
+            const mean = calculateMean(binomialData);
+            const variance = calculateVariance(binomialData, mean);
+            const poissonMean = lambda;
+            const poissonVariance = lambda;
+            updateCharacteristics(mean, variance, poissonMean, poissonVariance);
+
+            updateDistributionTable(binomialData, poissonData);
+        }
+
+        function calculateBinomialDistribution(n, p) {
+            const data = [];
+            let mean = 0;
+            let variance = 0;
+            const decimalPlaces = getDecimalPlaces1();
+
+            for (let i = 0; i <= n; i++) {
+                const probability = binomialProbability(i, n, p);
+                data.push({
+                    x: i,
+                    y: probability
+                });
+
+                mean += i * probability;
+                variance += i * i * probability;
+            }
+
+            variance -= mean * mean;
+
+            return data;
+        }
+
+        function generatePoissonData(lambda, n) {
+            const data = [];
+            const decimalPlaces = getDecimalPlaces1();
+
+            for (let i = 0; i <= n; i++) {
+                const probability = poissonProbability(i, lambda);
+                data.push({
+                    x: i,
+                    y: probability
+                });
+            }
+
+            return data;
+        }
+
+        function updateCombinedChart(binomialData, poissonData) {
+            const ctx = document.getElementById('combined-chart').getContext('2d');
+
+            myCombinedChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: Math.max(binomialData.length, poissonData.length) }, (_, i) => i.toString()),
+                    datasets: [{
+                        label: 'Binomial Probability',
+                        data: binomialData.map(entry => entry.y),
+                        backgroundColor: 'rgba(52, 152, 219, 0.7)',
+                        borderColor: 'rgba(52, 152, 219, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    },
+                    {
+                        label: 'Poisson Probability',
+                        data: poissonData.map(entry => entry.y),
+                        backgroundColor: 'rgba(255, 0, 0, 0.7)',
+                        borderColor: 'rgba(255, 0, 0, 1)',
+                        borderWidth: 1,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            max: Math.max(binomialData.length, poissonData.length) - 1
+                        },
+                        y: {
+                            min: 0,
+                            max: Math.max(Math.max(...binomialData.map(entry => entry.y)), Math.max(...poissonData.map(entry => entry.y))) + 0.01,
+                            ticks: {
+                                stepSize: 1 / Math.pow(10, getDecimalPlaces1()),
+                                beginAtZero: true
+                            }
+                        }
+                    },
+                    plugins: {
+                        zoom: {
+                            pan: {
+                                enabled: true,
+                                mode:'xy',
+                                OverScaleMode:'xy'
+                            },
+                            zoom: {
+                                wheel: {
+                                    enabled: true
+                                },
+                                pinch: {
+                                    enabled: true
+                                },
+                                mode: 'xy'
+                            }
+                        }
+                    },
+                    barPercentage: 0.1  
+                }  
+            });
+        }
+
+        function binomialProbability(x, n, p) {
+            const q = 1 - p;
+            let result = binomialCoefficient(n, x) * (p ** x) * (q ** (n - x));
+            return result;
+        }
+
+        function binomialCoefficient(n, x) {
+            return factorial(n) / (factorial(x) * factorial(n - x));
+        }
+
+        function poissonProbability(x, lambda) {
+            const ePower = Math.exp(-lambda);
+            const numerator = lambda ** x;
+            const denominator = factorial(x);
+            return (numerator * ePower) / denominator;
+        }
+
+        function factorial(n) {
+            if (n === 0 || n === 1) {
+                return 1;
+            } else {
+                return n * factorial(n - 1);
+            }
+        }
+
+        function getDecimalPlaces1() {
+            const decimalPlacesInput1 = document.getElementById('decimal-places1');
+            return parseInt(decimalPlacesInput1.value) || 3;
+        }  
+
+        function calculateMean(binomialData) {
+            let mean = 0;
+            for (let i = 0; i < binomialData.length; i++) {
+                mean += binomialData[i].x * binomialData[i].y;
+            }
+            return mean;
+        }
+
+        function calculateVariance(binomialData, mean) {
+            let variance = 0;
+            for (let i = 0; i < binomialData.length; i++) {
+                variance += (binomialData[i].x - mean) ** 2 * binomialData[i].y;
+            }
+            return variance;
+        }
+
+        function updateCharacteristics(mean, variance, meanPoisson, variancePoisson) {
+            const meanOutput = document.getElementById('mean2');
+            const varianceOutput = document.getElementById('variance2');
+            const meanPoissonOutput = document.getElementById('meanPoisson');
+            const variancePoissonOutput = document.getElementById('variancePoisson');
+
+            meanOutput.textContent = mean.toFixed(getDecimalPlaces1());
+            varianceOutput.textContent = variance.toFixed(getDecimalPlaces1());
+            meanPoissonOutput.textContent = meanPoisson.toFixed(getDecimalPlaces1());
+            variancePoissonOutput.textContent = variancePoisson.toFixed(getDecimalPlaces1());
+        }
+
+
+        function updateDecimalPlaces1() {
+            const decimalPlaces = getDecimalPlaces1();
+            const meanOutput = document.getElementById('mean2');
+            const varianceOutput = document.getElementById('variance2');
+            
+            const meanPoissonOutput = document.getElementById('meanPoisson');
+            const variancePoissonOutput = document.getElementById('variancePoisson');
+
+            meanOutput.textContent = parseFloat(meanOutput.textContent).toFixed(decimalPlaces);
+            varianceOutput.textContent = parseFloat(varianceOutput.textContent).toFixed(decimalPlaces);
+            
+            meanPoissonOutput.textContent = parseFloat(meanPoissonOutput.textContent).toFixed(getDecimalPlaces1());
+            variancePoissonOutput.textContent = parseFloat(variancePoisson).toFixed(getDecimalPlaces1());
+
+            // Пересчитываем данные перед обновлением таблицы
+            const nInput = document.getElementById('n');
+            const pInput = document.getElementById('p');
+            const lambdaInput = document.getElementById('lambda');
+
+            const n = parseInt(nInput.value);
+            const p = parseFloat(pInput.value);
+
+            const lambda = n * p;
+            lambdaInput.value = lambda.toFixed(2);
+
+            const binomialData = calculateBinomialDistribution(n, p);
+            const poissonData = generatePoissonData(lambda, n);
+
+            updateDistributionTable(binomialData, poissonData);
+        }
+
+        
+
+        function updateDistributionTable(binomialData, poissonData) {
+            const tableBody = document.getElementById('distribution-table-body');
+            tableBody.innerHTML = '';
+
+            const decimalPlaces = getDecimalPlaces1();
+
+            for (let i = 0; i < binomialData.length; i++) {
+                const newRow = document.createElement('tr');
+                const xCell = document.createElement('td');
+                const binomialProbCell = document.createElement('td');
+                const poissonProbCell = document.createElement('td');
+
+                xCell.textContent = binomialData[i].x;
+                binomialProbCell.textContent = binomialData[i].y.toExponential(decimalPlaces);
+                poissonProbCell.textContent = poissonData[i].y.toExponential(decimalPlaces);
+
+                newRow.appendChild(xCell);
+                newRow.appendChild(binomialProbCell);
+                newRow.appendChild(poissonProbCell);
+
+                tableBody.appendChild(newRow);
+            }
+
+            
+        }
+    </script>
+</body>
+
+</html>
