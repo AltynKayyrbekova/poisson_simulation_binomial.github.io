@@ -252,6 +252,11 @@
             return parseInt(decimalPlacesInput.value) || 3;
         }
 
+        function getDecimalPlaces() {
+            const decimalPlacesInput = document.getElementById('decimal-places');
+            return parseInt(decimalPlacesInput.value) || 3;
+        }
+
         function updatePoissonChart(data) {
             const ctx = document.getElementById('poisson-chart').getContext('2d');
             if (window.myPoissonChart) {
@@ -259,14 +264,13 @@
             }
 
             window.myPoissonChart = new Chart(ctx, {
-                type: 'bar',
+                type: 'scatter', 
                 data: {
                     labels: Array.from({ length: data.length }, (_, i) => i.toString()),
                     datasets: [{
                         label: 'Вероятность',
                         data: data,
-                        backgroundColor: 'rgba(155, 89, 182, 0.7)',
-                        borderColor: 'rgba(155, 89, 182, 1)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 1
                     }]
                 },
@@ -275,7 +279,7 @@
                         x: {
                             type: 'linear',
                             position: 'bottom',
-                            max: data.length -1
+                            max: data.length - 1
                         },
                         y: {
                             min: 0
@@ -297,9 +301,24 @@
                             }
                         }
                     },
-                    barPercentage: 0.1
+                    legend: false // Убираем легенду
+                    
                 }
             });
+
+            // Добавьте второй dataset с типом 'bar'
+            window.myPoissonChart.data.datasets.push({
+                type: 'bar',
+                label: 'Вероятность',
+                data: data,
+                backgroundColor: 'rgba(255, 99, 132, 1)',
+                borderColor: 'rgba(255, 99, 132, 1)', 
+                borderWidth: 1,
+                barPercentage: 0.01, 
+                
+            });
+
+            window.myPoissonChart.update();
         }
 
         function updateOutput(containerId, mean, variance) {
